@@ -216,7 +216,7 @@ fun CurrencyRow(items: List<CurrencyModel>) {
     Column(modifier = Modifier.animateContentSize()) {
         Row(
             modifier = Modifier
-                .horizontalFadingEdge(scrollState, 8.dp)
+                .horizontalFadingEdge(scrollState, 32.dp)
                 .horizontalScroll(scrollState), horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             (items + (1..max(0, 5 - items.size)).map {

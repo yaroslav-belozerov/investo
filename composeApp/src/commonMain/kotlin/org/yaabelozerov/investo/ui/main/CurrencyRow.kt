@@ -53,7 +53,7 @@ import org.yaabelozerov.investo.ui.main.model.CurrencyModel
 import kotlin.math.max
 
 @Composable
-fun CurrencyRow(items: List<CurrencyModel>) {
+fun CurrencyRow(items: Map<String, CurrencyModel>) {
     val scrollState = rememberScrollState()
     var current by remember {
         mutableStateOf(
@@ -68,7 +68,7 @@ fun CurrencyRow(items: List<CurrencyModel>) {
             modifier = Modifier.horizontalFadingEdge(scrollState, 16.dp)
                 .horizontalScroll(scrollState), horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            (items + (1..max(0, 5 - items.size)).map {
+            (items.values + (1..max(0, 5 - items.size)).map {
                 CurrencyModel(
                     "???", "", "???????", false, "", ""
                 )

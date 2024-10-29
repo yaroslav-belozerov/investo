@@ -13,7 +13,7 @@ import org.yaabelozerov.investo.ui.main.model.CurrencyModel
 import org.yaabelozerov.investo.ui.main.model.ShareModel
 
 class MainViewModel(private val tinkoffRepository: TinkoffRepository): ViewModel() {
-    private val _currencies = MutableStateFlow(emptyList<CurrencyModel>())
+    private val _currencies = MutableStateFlow(emptyMap<String, CurrencyModel>())
     val currencies = _currencies.asStateFlow()
 
     private val _shares = MutableStateFlow(emptyList<ShareModel>())
@@ -44,7 +44,7 @@ class MainViewModel(private val tinkoffRepository: TinkoffRepository): ViewModel
         viewModelScope.launch {
             try {
                 tinkoffRepository.getCurrencies(_token.value).collect { curr ->
-                    _currencies.update { it.plus(curr) }
+                    _currencies.update { it.plus(curr.isoCode to curr) }
                 }
             } catch (_: Throwable) {}
         }

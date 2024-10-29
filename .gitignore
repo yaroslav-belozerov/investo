@@ -2,3 +2,6 @@
 .gradle
 release
 build
+kotlin-js-store
+.kotlin
+.fleet

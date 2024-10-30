@@ -64,10 +64,6 @@ kotlin {
 
             implementation("io.insert-koin:koin-android:4.0.0")
             implementation("org.jetbrains.compose.material3:material3:1.7.0")
-
-            implementation("androidx.compose.material3.adaptive:adaptive:1.1.0-alpha05")
-            implementation("androidx.compose.material3.adaptive:adaptive-layout:1.1.0-alpha05")
-            implementation("androidx.compose.material3.adaptive:adaptive-navigation:1.1.0-alpha05")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -93,6 +89,11 @@ kotlin {
             implementation("com.russhwolf:multiplatform-settings:1.2.0")
             implementation("com.russhwolf:multiplatform-settings-coroutines:1.2.0")
             implementation("com.russhwolf:multiplatform-settings-no-arg:1.2.0")
+
+            implementation(compose.material3AdaptiveNavigationSuite)
+            implementation("org.jetbrains.compose.material3.adaptive:adaptive:1.0.0-alpha03")
+            implementation("org.jetbrains.compose.material3.adaptive:adaptive-layout:1.0.0-alpha03")
+            implementation("org.jetbrains.compose.material3.adaptive:adaptive-navigation:1.0.0-alpha03")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

@@ -18,9 +18,12 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -52,8 +55,9 @@ import org.yaabelozerov.investo.shimmerBackground
 import org.yaabelozerov.investo.ui.main.model.CurrencyModel
 import kotlin.math.max
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun CurrencyRow(items: Map<String, CurrencyModel>) {
+fun CurrencyRow(items: Map<String, CurrencyModel>, extendedLayout: Boolean) {
     val scrollState = rememberScrollState()
     var current by remember {
         mutableStateOf(
@@ -64,16 +68,34 @@ fun CurrencyRow(items: Map<String, CurrencyModel>) {
     }
     var isOpen by remember { mutableStateOf(false) }
     Column(modifier = Modifier.animateContentSize()) {
-        Row(
+        val chips = (items.values + (1..max(0, 5 - items.size)).map {
+            CurrencyModel(
+                "???", "", "???????", false, "", ""
+            )
+        })
+
+        if (extendedLayout) FlowRow(
+            modifier = Modifier
+        ) {
+            chips.forEach {
+                CurrencyChip(model = it, isChosen = current == it, extendedLayout = extendedLayout) {
+                    if (current == it) {
+                        isOpen = false
+                        current = CurrencyModel(
+                            "???", "", "???????", false, "", ""
+                        )
+                    } else {
+                        current = it
+                        isOpen = true
+                    }
+                }
+            }
+        } else Row(
             modifier = Modifier.horizontalFadingEdge(scrollState, 16.dp)
                 .horizontalScroll(scrollState), horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            (items.values + (1..max(0, 5 - items.size)).map {
-                CurrencyModel(
-                    "???", "", "???????", false, "", ""
-                )
-            }).forEach {
-                CurrencyChip(model = it, isChosen = current == it) {
+            chips.forEach {
+                CurrencyChip(model = it, isChosen = current == it, extendedLayout = extendedLayout) {
                     if (current == it) {
                         isOpen = false
                         current = CurrencyModel(
@@ -140,27 +162,35 @@ fun CurrencyRow(items: Map<String, CurrencyModel>) {
 }
 
 @Composable
-fun CurrencyChip(model: CurrencyModel, isChosen: Boolean, onOpen: () -> Unit) {
-    var isVisible by rememberSaveable { mutableStateOf(false) }
+fun CurrencyChip(
+    model: CurrencyModel,
+    isChosen: Boolean,
+    extendedLayout: Boolean,
+    onOpen: () -> Unit
+) {
+    var isVisible by rememberSaveable { mutableStateOf(false)}
     LaunchedEffect(null) { isVisible = true }
     AnimatedVisibility(
         visible = isVisible, enter = fadeIn() + slideInVertically() + expandVertically()
     ) {
         Crossfade(model.isLoaded) { loaded ->
-            Box(
-                modifier = Modifier.clip(MaterialTheme.shapes.medium).then(if (!loaded) Modifier.shimmerBackground(
+            Box(contentAlignment = Alignment.Center,
+                modifier = Modifier.clip(MaterialTheme.shapes.medium).then(
+                    if (extendedLayout) Modifier.width(128.dp)
+                    else Modifier
+                ).then(if (!loaded) Modifier.shimmerBackground(
                         MaterialTheme.shapes.medium
                     )
                     else Modifier.background(CardDefaults.outlinedCardColors().containerColor, MaterialTheme.shapes.medium)
                         .clickable { onOpen() }).border(
-                        1.dp, if (loaded) {
+                        1.dp, if (loaded && !extendedLayout) {
                             if (!isChosen) OutlinedTextFieldDefaults.colors().unfocusedIndicatorColor
                             else MaterialTheme.colorScheme.primary
                         } else Color.Transparent, MaterialTheme.shapes.medium
                     )
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = if (!extendedLayout) 16.dp else 4.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {

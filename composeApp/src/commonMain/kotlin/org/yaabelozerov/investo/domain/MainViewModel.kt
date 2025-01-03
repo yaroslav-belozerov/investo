@@ -6,6 +6,7 @@ import com.russhwolf.settings.Settings
 import com.russhwolf.settings.set
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.yaabelozerov.investo.network.ApiBaseUrl
@@ -13,7 +14,7 @@ import org.yaabelozerov.investo.ui.main.model.CurrencyModel
 import org.yaabelozerov.investo.ui.main.model.ShareModel
 
 class MainViewModel(private val tinkoffRepository: TinkoffRepository): ViewModel() {
-    private val _currencies = MutableStateFlow(emptyMap<String, CurrencyModel>())
+    private val _currencies = MutableStateFlow(emptyList<CurrencyModel>())
     val currencies = _currencies.asStateFlow()
 
     private val _shares = MutableStateFlow(emptyList<ShareModel>())
@@ -28,23 +29,15 @@ class MainViewModel(private val tinkoffRepository: TinkoffRepository): ViewModel
     private val settings = Settings()
 
     init {
-        fetchToken {
-            try {
-                fetchCurrencies()
-            } catch (_: Throwable) { }
-        }
-    }
-
-    private fun fetchToken(callback: () -> Unit = {}) {
         _token.update { settings.getString("token", "") }
-        callback()
+        fetchCurrencies()
     }
 
-    fun fetchCurrencies() {
+    private fun fetchCurrencies() {
         viewModelScope.launch {
             try {
                 tinkoffRepository.getCurrencies(_token.value).collect { curr ->
-                    _currencies.update { it.plus(curr.isoCode to curr) }
+                    _currencies.update { it.plus(curr) }
                 }
             } catch (_: Throwable) {}
         }
@@ -62,7 +55,7 @@ class MainViewModel(private val tinkoffRepository: TinkoffRepository): ViewModel
     }
 
     fun setToken(token: String) {
-        settings.set("token", token)
+        settings["token"] = token
         _token.update { token }
         fetchCurrencies()
     }

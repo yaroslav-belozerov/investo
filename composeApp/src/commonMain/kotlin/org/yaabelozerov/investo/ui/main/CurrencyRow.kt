@@ -57,7 +57,7 @@ import kotlin.math.max
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun CurrencyRow(items: Map<String, CurrencyModel>, extendedLayout: Boolean) {
+fun CurrencyRow(items: List<CurrencyModel>, extendedLayout: Boolean) {
     val scrollState = rememberScrollState()
     var current by remember {
         mutableStateOf(
@@ -68,7 +68,7 @@ fun CurrencyRow(items: Map<String, CurrencyModel>, extendedLayout: Boolean) {
     }
     var isOpen by remember { mutableStateOf(false) }
     Column(modifier = Modifier.animateContentSize()) {
-        val chips = (items.values + (1..max(0, 5 - items.size)).map {
+        val chips = (items + (1..max(0, 5 - items.size)).map {
             CurrencyModel(
                 "???", "", "???????", false, "", ""
             )

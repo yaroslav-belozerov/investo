@@ -35,9 +35,6 @@ fun App(
     val nc = rememberNavController()
     val scope = rememberCoroutineScope()
     AppTheme(darkTheme, dynamicColor) {
-        LaunchedEffect(true) {
-            mvm.fetchCurrencies()
-        }
         var currentDestination by rememberSaveable { mutableStateOf(Nav.MAIN) }
         val extendedLayout = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass != WindowWidthSizeClass.COMPACT
 

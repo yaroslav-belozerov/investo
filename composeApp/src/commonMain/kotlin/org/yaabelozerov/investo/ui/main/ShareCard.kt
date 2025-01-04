@@ -63,7 +63,6 @@ fun ShareCard(share: ShareModel) {
                     Text(
                         modifier = Modifier.animateContentSize(),
                         text = share.name,
-                        fontSize = 20.sp,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 2
                     )
@@ -88,9 +87,6 @@ fun ShareCard(share: ShareModel) {
                 Text(
                     text = share.price,
                     softWrap = false,
-                    fontFamily = FontFamily.Monospace,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 20.sp
                 )
                 Spacer(modifier = Modifier.width(8.dp))
             }
@@ -110,11 +106,11 @@ private fun ShareChip(
         Row(
             modifier = Modifier.padding(8.dp, 4.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             indicators.forEach {
                 Text(
-                    text = it.first, color = it.second
+                    text = it.first, color = it.second, style = MaterialTheme.typography.bodyMedium
                 )
             }
         }

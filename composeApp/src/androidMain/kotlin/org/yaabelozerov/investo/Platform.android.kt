@@ -10,6 +10,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import org.yaabelozerov.investo.ui.theme.Typography
 import java.text.DecimalFormat
 import java.util.Currency
 import java.util.Locale
@@ -37,7 +38,7 @@ actual fun AppTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = MaterialTheme.typography,
+        typography = Typography,
         content = content
     )
 }

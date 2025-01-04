@@ -75,9 +75,8 @@ fun ShareSearchBar(
         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
         placeholder = {
             Text(
-                "Shares", fontSize = 20.sp
+                "Shares"
             )
         },
-        textStyle = LocalTextStyle.current.copy(fontSize = 20.sp)
     )
 }

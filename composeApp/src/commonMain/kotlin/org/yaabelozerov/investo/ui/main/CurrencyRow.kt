@@ -101,7 +101,6 @@ fun CurrencyRow(items: List<CurrencyModel>, extendedLayout: Boolean) {
                     modifier = Modifier.padding(0.dp, 24.dp, 0.dp, 0.dp).fillMaxWidth(),
                     text = current?.name ?: "",
                     textAlign = TextAlign.Center,
-                    fontSize = 20.sp
                 )
                 Row(
                     modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 24.dp).fillMaxWidth(),
@@ -150,7 +149,9 @@ fun CurrencyChip(
     ) {
         Column(modifier = Modifier.padding(16.dp, 8.dp)) {
             Text(
-                model.isoCode, color = MaterialTheme.colorScheme.onBackground
+                model.isoCode,
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.bodyMedium
             )
             Text(
                 model.price,

@@ -1,8 +1,12 @@
 package org.yaabelozerov.investo
 
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import com.russhwolf.settings.Settings
 import org.yaabelozerov.investo.network.TinkoffApi
+import org.yaabelozerov.investo.ui.theme.Typography
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.math.pow
 import kotlin.math.round
@@ -13,6 +17,11 @@ actual fun AppTheme(
     dynamicColor: Boolean,
     content: @Composable () -> Unit
 ) {
+    MaterialTheme(
+        colorScheme = if(darkTheme) darkColorScheme() else lightColorScheme(),
+        typography = Typography,
+        content = content
+    )
 }
 
 actual class DecimalFormat actual constructor() {

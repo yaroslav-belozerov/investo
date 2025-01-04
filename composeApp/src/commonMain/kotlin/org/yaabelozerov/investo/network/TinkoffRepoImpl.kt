@@ -99,7 +99,7 @@ class TinkoffRepositoryImpl(private val tinkoffApi: TinkoffApi) : TinkoffReposit
                     share.name ?: "No name",
                     canShort = share.shortEnabledFlag == true,
                     fmt.format(lastPrice.times(share.lot ?: 1), 2)
-                        .plus(localeMap.currencyToSymbol(share.currency ?: "")),
+                        .plus(" ${localeMap.currencyToSymbol(share.currency ?: "")}"),
                     share.countryOfRisk?.let { localeMap.countryToFlag(it) } ?: "",
                     share.apiTradeAvailableFlag == true,
                     share.buyAvailableFlag == true,

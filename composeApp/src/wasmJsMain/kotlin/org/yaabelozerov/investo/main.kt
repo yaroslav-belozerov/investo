@@ -10,6 +10,6 @@ import org.koin.core.context.startKoin
 fun main() {
     startKoin { modules(appModule) }
     ComposeViewport(document.body!!) {
-        App(isSystemInDarkTheme(), false)
+        App()
     }
 }

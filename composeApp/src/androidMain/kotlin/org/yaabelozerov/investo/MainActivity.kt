@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            App(isSystemInDarkTheme(), true)
+            App()
         }
     }
 }

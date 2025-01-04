@@ -17,6 +17,6 @@ fun main() = application {
         title = "Investo",
         state = rememberWindowState(size = DpSize(1200.dp, 600.dp))
     ) {
-        App(isSystemInDarkTheme(), false)
+        App()
     }
 }

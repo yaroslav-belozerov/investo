@@ -1,9 +1,11 @@
 package org.yaabelozerov.investo
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.*
@@ -22,18 +24,19 @@ import org.yaabelozerov.investo.domain.MainViewModel
 import org.yaabelozerov.investo.ui.Nav
 import org.yaabelozerov.investo.ui.main.MainPage
 import org.yaabelozerov.investo.ui.settings.SettingsPage
+import org.yaabelozerov.investo.ui.theme.Typography
+import org.yaabelozerov.investo.ui.theme.darkScheme
+import org.yaabelozerov.investo.ui.theme.lightScheme
 
 @Composable
 @Preview
-fun App(
-    darkTheme: Boolean, dynamicColor: Boolean
-) {
+fun App() {
     val mvm = koinViewModel<MainViewModel>()
     val fr = remember { FocusRequester() }
     val lazyListState = rememberLazyListState()
     val navCtrl = rememberNavController()
     val scope = rememberCoroutineScope()
-    AppTheme(darkTheme, dynamicColor) {
+    MaterialTheme(colorScheme = if (isSystemInDarkTheme()) darkScheme else lightScheme, typography = Typography) {
         var currentDestination by rememberSaveable { mutableStateOf(Nav.MAIN) }
         val extendedLayout =
             currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass != WindowWidthSizeClass.COMPACT

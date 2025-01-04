@@ -59,13 +59,6 @@ val appModule = module {
     viewModelOf(::MainViewModel)
 }
 
-@Composable
-expect fun AppTheme(
-    darkTheme: Boolean,
-    dynamicColor: Boolean,
-    content: @Composable () -> Unit
-)
-
 expect class DecimalFormat() {
     fun format(num: Double, places: Int) : String
 }

@@ -16,19 +16,6 @@ class WasmPlatform: Platform {
 
 actual fun getPlatform(): Platform = WasmPlatform()
 
-@Composable
-actual fun AppTheme(
-    darkTheme: Boolean,
-    dynamicColor: Boolean,
-    content: @Composable () -> Unit
-) {
-    MaterialTheme(
-        colorScheme = if(darkTheme) darkColorScheme() else lightColorScheme(),
-        typography = Typography,
-        content = content
-    )
-}
-
 actual class DecimalFormat actual constructor() {
     actual fun format(num: Double, places: Int): String {
         return round(num.times(10.0.pow(places))).div(10.0.pow(places)).toString()

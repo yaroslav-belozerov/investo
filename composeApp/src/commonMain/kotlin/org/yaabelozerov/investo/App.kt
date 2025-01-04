@@ -1,13 +1,9 @@
 package org.yaabelozerov.investo
 
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.runtime.*
@@ -35,7 +31,7 @@ fun App(
     val mvm = koinViewModel<MainViewModel>()
     val fr = remember { FocusRequester() }
     val lazyListState = rememberLazyListState()
-    val nc = rememberNavController()
+    val navCtrl = rememberNavController()
     val scope = rememberCoroutineScope()
     AppTheme(darkTheme, dynamicColor) {
         var currentDestination by rememberSaveable { mutableStateOf(Nav.MAIN) }
@@ -67,16 +63,19 @@ fun App(
                             }
                         }
                     } else {
-                        nc.popBackStack(
-                            it.route, inclusive = true, saveState = true
-                        )
-                        nc.navigate(it.route)
+                        navCtrl.navigate(it.route) {
+                            launchSingleTop = true
+                            restoreState = true
+                            popUpTo(navCtrl.graph.startDestinationRoute ?: return@navigate) {
+                                saveState = true
+                            }
+                        }
                         currentDestination = it
                     }
                 })
             }
         }, content = {
-            NavHost(nc, startDestination = Nav.MAIN.route) {
+            NavHost(navCtrl, startDestination = Nav.MAIN.route) {
                 composable(Nav.MAIN.route) {
                     MainPage(
                         mvm,

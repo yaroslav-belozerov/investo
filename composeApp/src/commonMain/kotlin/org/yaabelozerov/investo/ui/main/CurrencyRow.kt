@@ -68,15 +68,18 @@ fun CurrencyRow(items: List<CurrencyModel>, extendedLayout: Boolean) {
                 }
             }
         }
-        if (extendedLayout) FlowRow(modifier = Modifier,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            content = { content() }) else Row(modifier = Modifier.horizontalFadingEdge(
-            scrollState,
-            16.dp
-        ).horizontalScroll(scrollState),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            content = { content() })
+        if (extendedLayout) {
+            FlowRow(modifier = Modifier,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                content = { content() })
+        } else {
+            Row(modifier = Modifier.horizontalFadingEdge(
+                scrollState, 16.dp
+            ).horizontalScroll(scrollState),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                content = { content() })
+        }
 
         AnimatedVisibility(
             isOpen,
@@ -84,7 +87,7 @@ fun CurrencyRow(items: List<CurrencyModel>, extendedLayout: Boolean) {
             exit = fadeOut() + slideOutVertically() + shrinkVertically()
         ) {
             OutlinedCard(
-                modifier = Modifier.fillMaxWidth().padding(0.dp, 8.dp, 0.dp, 0.dp),
+                modifier = Modifier.fillMaxWidth().padding(0.dp, 16.dp, 0.dp, 0.dp),
                 border = CardDefaults.outlinedCardBorder().copy(
                     brush = Brush.horizontalGradient(
                         listOf(

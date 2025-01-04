@@ -1,8 +1,11 @@
 package org.yaabelozerov.investo.ui.main
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -36,10 +39,12 @@ fun MainPage(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
-            if (state.loadingCurrencies) {
-                LinearProgressIndicator()
-            } else {
-                CurrencyRow(state.currencies, extendedLayout)
+            AnimatedContent(state.loadingCurrencies) {
+                if (it) {
+                    LinearProgressIndicator(Modifier.fillMaxWidth().padding(horizontal = 8.dp))
+                } else {
+                    CurrencyRow(state.currencies, extendedLayout)
+                }
             }
         }
         item {

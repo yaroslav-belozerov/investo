@@ -44,14 +44,14 @@ class TinkoffRepositoryImpl(private val tinkoffApi: TinkoffApi) : TinkoffReposit
                         ).any { it <= 0.0 }
                     ) return@async null
 
+                    val currencySymbolPostfix = " ${localeMap.currencyToSymbol(it.currency ?: "")}"
                     return@async CurrencyModel(
                         isoCode = it.isoCurrencyName?.uppercase() ?: error("No iso currency code"),
                         it.name ?: "",
-                        isLoaded = true,
                         price = fmt.format(lastPrice / nominal, 3)
-                            .plus(" ${localeMap.currencyToSymbol(it.currency ?: "")}"),
-                        minPrice = fmt.format(minPrice / nominal, 3),
-                        maxPrice = fmt.format(maxPrice / nominal, 3)
+                            .plus(currencySymbolPostfix),
+                        minPrice = fmt.format(minPrice / nominal, 3).plus(currencySymbolPostfix),
+                        maxPrice = fmt.format(maxPrice / nominal, 3).plus(currencySymbolPostfix)
                     )
                 }
             }?.onEach { it.await()?.let { emit(it) } }

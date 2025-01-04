@@ -1,14 +1,22 @@
 package org.yaabelozerov.investo.ui.main
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.EaseInCubic
+import androidx.compose.animation.core.EaseInElastic
+import androidx.compose.animation.core.EaseInExpo
+import androidx.compose.animation.core.EaseInQuint
+import androidx.compose.animation.core.EaseOutQuint
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,7 +37,9 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,11 +47,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.yaabelozerov.investo.CrossfadeText
 import org.yaabelozerov.investo.horizontalFadingEdge
 import org.yaabelozerov.investo.isLayoutWide
 import org.yaabelozerov.investo.ui.main.model.CurrencyModel
@@ -51,7 +65,7 @@ import org.yaabelozerov.investo.ui.main.model.CurrencyModel
 fun CurrencyRow(items: List<CurrencyModel>) {
     val scrollState = rememberScrollState()
     var current by remember {
-        mutableStateOf(items.firstOrNull())
+        mutableStateOf(items.firstOrNull() ?: CurrencyModel("", "", "", "", ""))
     }
     var isOpen by remember { mutableStateOf(false) }
     Column {
@@ -82,57 +96,7 @@ fun CurrencyRow(items: List<CurrencyModel>) {
                 content = { content() })
         }
 
-        AnimatedVisibility(
-            isOpen,
-            enter = fadeIn() + slideInVertically() + expandVertically(),
-            exit = fadeOut() + slideOutVertically() + shrinkVertically()
-        ) {
-            OutlinedCard(
-                modifier = Modifier.fillMaxWidth().padding(0.dp, 16.dp, 0.dp, 0.dp),
-                border = CardDefaults.outlinedCardBorder().copy(
-                    brush = Brush.horizontalGradient(
-                        listOf(
-                            MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.primary
-                        )
-                    )
-                ),
-                shape = MaterialTheme.shapes.medium
-            ) {
-                Text(
-                    modifier = Modifier.padding(0.dp, 24.dp, 0.dp, 0.dp).fillMaxWidth(),
-                    text = current?.name ?: "",
-                    textAlign = TextAlign.Center,
-                )
-                Row(
-                    modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 24.dp).fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Icon(
-                            Icons.Default.KeyboardArrowUp,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error
-                        )
-                        Text(current?.maxPrice ?: "", color = MaterialTheme.colorScheme.error)
-                    }
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Icon(
-                            Icons.Default.KeyboardArrowDown,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.secondary
-                        )
-                        Text(current?.minPrice ?: "", color = MaterialTheme.colorScheme.secondary)
-                    }
-                }
-            }
-        }
+        CurrencyCard(current, isOpen)
     }
 }
 
@@ -140,7 +104,7 @@ fun CurrencyRow(items: List<CurrencyModel>) {
 fun CurrencyChip(
     model: CurrencyModel, isChosen: Boolean, onOpen: () -> Unit
 ) {
-    val corners by animateDpAsState(if (isChosen) 20.dp else 12.dp)
+    val corners by animateDpAsState(if (isChosen) 32.dp else 12.dp)
     val color by animateColorAsState(if (isChosen) CardDefaults.cardColors().containerColor else CardDefaults.elevatedCardColors().containerColor)
 
     Card(
@@ -159,6 +123,62 @@ fun CurrencyChip(
                 fontFamily = FontFamily.Monospace,
                 color = MaterialTheme.colorScheme.primary
             )
+        }
+    }
+}
+
+@Composable
+fun CurrencyCard(model: CurrencyModel, isOpen: Boolean = false) {
+    AnimatedVisibility(
+        isOpen, enter = fadeIn(
+            animationSpec = tween(
+                300, easing = EaseInQuint
+            )
+        ) + slideInVertically(initialOffsetY = { -it / 3 }) + expandVertically(), exit = fadeOut(
+            animationSpec = tween(
+                300, easing = EaseOutQuint
+            )
+        ) + slideOutVertically(targetOffsetY = { -it / 3 }) + shrinkVertically()
+    ) {
+        OutlinedCard(
+            modifier = Modifier.fillMaxWidth().padding(top = 16.dp), border = BorderStroke(
+                OutlinedTextFieldDefaults.FocusedBorderThickness, MaterialTheme.colorScheme.primary
+            ), shape = MaterialTheme.shapes.medium
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CrossfadeText(model.name)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(32.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        CrossfadeText(
+                            "MAX",
+                            color = MaterialTheme.colorScheme.error,
+                            fontWeight = FontWeight.Bold
+                        )
+                        CrossfadeText(model.maxPrice)
+                    }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        CrossfadeText(
+                            "MIN",
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontWeight = FontWeight.Bold
+                        )
+                        CrossfadeText(model.minPrice)
+                    }
+                }
+            }
         }
     }
 }

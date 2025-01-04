@@ -1,15 +1,22 @@
 package org.yaabelozerov.investo
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -23,6 +30,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.platform.debugInspectorInfo
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -99,3 +107,12 @@ fun Modifier.shimmerBackground(shape: Shape = RectangleShape): Modifier = compos
     )
     return@composed this.then(background(brush, shape))
 }
+
+@Composable
+fun CrossfadeText(text: String, color: Color? = null, fontWeight: FontWeight? = null) =
+    AnimatedContent(
+        text, transitionSpec = { fadeIn() togetherWith fadeOut() }
+    ) {
+        val textStyle = LocalTextStyle.current
+        Text(it, color = color ?: textStyle.color, fontWeight = fontWeight ?: textStyle.fontWeight)
+    }

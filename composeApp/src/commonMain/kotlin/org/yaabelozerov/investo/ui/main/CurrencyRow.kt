@@ -50,7 +50,7 @@ import org.yaabelozerov.investo.ui.main.model.CurrencyModel
 fun CurrencyRow(items: List<CurrencyModel>, extendedLayout: Boolean) {
     val scrollState = rememberScrollState()
     var current by remember {
-        mutableStateOf(items.first())
+        mutableStateOf(items.firstOrNull())
     }
     var isOpen by remember { mutableStateOf(false) }
     Column {
@@ -99,7 +99,7 @@ fun CurrencyRow(items: List<CurrencyModel>, extendedLayout: Boolean) {
             ) {
                 Text(
                     modifier = Modifier.padding(0.dp, 24.dp, 0.dp, 0.dp).fillMaxWidth(),
-                    text = current.name,
+                    text = current?.name ?: "",
                     textAlign = TextAlign.Center,
                     fontSize = 20.sp
                 )
@@ -117,7 +117,7 @@ fun CurrencyRow(items: List<CurrencyModel>, extendedLayout: Boolean) {
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.error
                         )
-                        Text(current.maxPrice, color = MaterialTheme.colorScheme.error)
+                        Text(current?.maxPrice ?: "", color = MaterialTheme.colorScheme.error)
                     }
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -128,7 +128,7 @@ fun CurrencyRow(items: List<CurrencyModel>, extendedLayout: Boolean) {
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.secondary
                         )
-                        Text(current.minPrice, color = MaterialTheme.colorScheme.secondary)
+                        Text(current?.minPrice ?: "", color = MaterialTheme.colorScheme.secondary)
                     }
                 }
             }

@@ -42,7 +42,7 @@ fun MainPage(
             AnimatedContent(state.loadingCurrencies) {
                 if (it) {
                     LinearProgressIndicator(Modifier.fillMaxWidth().padding(horizontal = 8.dp))
-                } else {
+                } else if (state.currencies.isNotEmpty()) {
                     CurrencyRow(state.currencies, extendedLayout)
                 }
             }

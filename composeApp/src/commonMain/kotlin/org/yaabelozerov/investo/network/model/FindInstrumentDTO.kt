@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FindInstrumentDTO(
     @SerialName("instruments")
-    val findInstruments: List<FindInstrument>? = null,
+    val findInstruments: List<FindInstrument>,
 )
 
 @Serializable

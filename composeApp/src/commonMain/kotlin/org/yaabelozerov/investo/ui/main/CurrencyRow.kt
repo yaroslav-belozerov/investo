@@ -43,11 +43,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.yaabelozerov.investo.horizontalFadingEdge
+import org.yaabelozerov.investo.isLayoutWide
 import org.yaabelozerov.investo.ui.main.model.CurrencyModel
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun CurrencyRow(items: List<CurrencyModel>, extendedLayout: Boolean) {
+fun CurrencyRow(items: List<CurrencyModel>) {
     val scrollState = rememberScrollState()
     var current by remember {
         mutableStateOf(items.firstOrNull())
@@ -68,7 +69,7 @@ fun CurrencyRow(items: List<CurrencyModel>, extendedLayout: Boolean) {
                 }
             }
         }
-        if (extendedLayout) {
+        if (isLayoutWide()) {
             FlowRow(modifier = Modifier,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),

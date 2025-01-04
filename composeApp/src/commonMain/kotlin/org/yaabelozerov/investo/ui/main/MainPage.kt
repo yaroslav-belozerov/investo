@@ -27,7 +27,6 @@ fun MainPage(
     mvm: MainViewModel,
     fr: FocusRequester,
     lazyListState: LazyListState,
-    extendedLayout: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     var sharesQuery by remember { mutableStateOf("") }
@@ -43,7 +42,7 @@ fun MainPage(
                 if (it) {
                     LinearProgressIndicator(Modifier.fillMaxWidth().padding(horizontal = 8.dp))
                 } else if (state.currencies.isNotEmpty()) {
-                    CurrencyRow(state.currencies, extendedLayout)
+                    CurrencyRow(state.currencies)
                 }
             }
         }

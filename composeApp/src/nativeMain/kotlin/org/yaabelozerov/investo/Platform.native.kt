@@ -1,12 +1,8 @@
 package org.yaabelozerov.investo
 
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
-import com.russhwolf.settings.Settings
-import org.yaabelozerov.investo.network.TinkoffApi
-import org.yaabelozerov.investo.ui.theme.Typography
+import androidx.window.core.layout.WindowWidthSizeClass
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.math.pow
 import kotlin.math.round
@@ -46,3 +42,6 @@ actual class LocaleMap actual constructor() {
         return map[isoCode] ?: isoCode
     }
 }
+
+@Composable
+actual fun isLayoutWide() = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass != WindowWidthSizeClass.COMPACT

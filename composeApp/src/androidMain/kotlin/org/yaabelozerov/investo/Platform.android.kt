@@ -4,12 +4,14 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import androidx.window.core.layout.WindowWidthSizeClass
 import org.yaabelozerov.investo.ui.theme.Typography
 import java.text.DecimalFormat
 import java.util.Currency
@@ -48,3 +50,6 @@ actual class LocaleMap actual constructor() {
         return currency.symbol
     }
 }
+
+@Composable
+actual fun isLayoutWide() = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass != WindowWidthSizeClass.COMPACT

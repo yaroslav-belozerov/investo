@@ -49,3 +49,6 @@ actual class LocaleMap actual constructor() {
         return map[isoCode] ?: isoCode
     }
 }
+
+@Composable
+actual fun isLayoutWide() = true

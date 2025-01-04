@@ -8,6 +8,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -36,64 +37,65 @@ fun App() {
     val lazyListState = rememberLazyListState()
     val navCtrl = rememberNavController()
     val scope = rememberCoroutineScope()
-    MaterialTheme(colorScheme = if (isSystemInDarkTheme()) darkScheme else lightScheme, typography = Typography) {
+    MaterialTheme(
+        colorScheme = if (isSystemInDarkTheme()) darkScheme else lightScheme,
+        typography = Typography
+    ) {
         var currentDestination by rememberSaveable { mutableStateOf(Nav.MAIN) }
-        val extendedLayout =
-            currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass != WindowWidthSizeClass.COMPACT
-
-        NavigationSuiteScaffold(navigationSuiteItems = {
-            Nav.entries.forEach {
-                item(modifier = Modifier.then(
-                    if (extendedLayout) Modifier.padding(
-                        start = 8.dp, top = 16.dp
-                    ) else Modifier
-                ), selected = it == currentDestination, icon = {
-                    Icon(
-                        if (it == currentDestination) it.iconFilled else it.iconOutline,
-                        contentDescription = null
-                    )
-                }, onClick = {
-                    if (it == currentDestination && it == Nav.MAIN) {
-                        try {
-                            fr.requestFocus()
-                        } catch (_: Exception) {
-                        }
-                        scope.launch {
-                            lazyListState.animateScrollToItem(0)
+        val addPadding = isLayoutWide()
+        NavigationSuiteScaffold(layoutType = if (isLayoutWide()) NavigationSuiteType.NavigationRail else NavigationSuiteType.NavigationBar,
+            navigationSuiteItems = {
+                Nav.entries.forEach {
+                    item(modifier = Modifier.then(
+                        if (addPadding) Modifier.padding(
+                            start = 8.dp, top = 16.dp
+                        ) else Modifier
+                    ), selected = it == currentDestination, icon = {
+                        Icon(
+                            if (it == currentDestination) it.iconFilled else it.iconOutline,
+                            contentDescription = null
+                        )
+                    }, onClick = {
+                        if (it == currentDestination && it == Nav.MAIN) {
                             try {
                                 fr.requestFocus()
                             } catch (_: Exception) {
                             }
-                        }
-                    } else {
-                        navCtrl.navigate(it.route) {
-                            launchSingleTop = true
-                            restoreState = true
-                            popUpTo(navCtrl.graph.startDestinationRoute ?: return@navigate) {
-                                saveState = true
+                            scope.launch {
+                                lazyListState.animateScrollToItem(0)
+                                try {
+                                    fr.requestFocus()
+                                } catch (_: Exception) {
+                                }
                             }
+                        } else {
+                            navCtrl.navigate(it.route) {
+                                launchSingleTop = true
+                                restoreState = true
+                                popUpTo(
+                                    navCtrl.graph.startDestinationRoute ?: return@navigate
+                                ) {
+                                    saveState = true
+                                }
+                            }
+                            currentDestination = it
                         }
-                        currentDestination = it
+                    })
+                }
+            },
+            content = {
+                NavHost(navCtrl, startDestination = Nav.MAIN.route) {
+                    composable(Nav.MAIN.route) {
+                        MainPage(
+                            mvm, fr, lazyListState, modifier = Modifier.safeDrawingPadding()
+                        )
                     }
-                })
-            }
-        }, content = {
-            NavHost(navCtrl, startDestination = Nav.MAIN.route) {
-                composable(Nav.MAIN.route) {
-                    MainPage(
-                        mvm,
-                        fr,
-                        lazyListState,
-                        extendedLayout,
-                        modifier = Modifier.safeDrawingPadding()
-                    )
+                    composable(Nav.SETTINGS.route) {
+                        SettingsPage(
+                            mvm, modifier = Modifier.safeDrawingPadding()
+                        )
+                    }
                 }
-                composable(Nav.SETTINGS.route) {
-                    SettingsPage(
-                        mvm, modifier = Modifier.safeDrawingPadding()
-                    )
-                }
-            }
-        })
+            })
     }
 }

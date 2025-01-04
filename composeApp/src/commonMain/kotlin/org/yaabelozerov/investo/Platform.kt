@@ -59,6 +59,9 @@ val appModule = module {
     viewModelOf(::MainViewModel)
 }
 
+@Composable
+expect fun isLayoutWide(): Boolean
+
 expect class DecimalFormat() {
     fun format(num: Double, places: Int) : String
 }

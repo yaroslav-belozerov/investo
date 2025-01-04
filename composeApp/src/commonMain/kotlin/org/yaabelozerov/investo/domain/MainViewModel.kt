@@ -3,7 +3,9 @@ package org.yaabelozerov.investo.domain
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.russhwolf.settings.Settings
+import com.russhwolf.settings.get
 import com.russhwolf.settings.set
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -13,15 +15,16 @@ import org.yaabelozerov.investo.network.ApiBaseUrl
 import org.yaabelozerov.investo.ui.main.model.CurrencyModel
 import org.yaabelozerov.investo.ui.main.model.ShareModel
 
+data class MainState(
+    val currencies: List<CurrencyModel> = emptyList(),
+    val loadingCurrencies: Boolean = true,
+    val shares: List<ShareModel> = emptyList(),
+    val loadingShares: Boolean = false
+)
+
 class MainViewModel(private val tinkoffRepository: TinkoffRepository): ViewModel() {
-    private val _currencies = MutableStateFlow(emptyList<CurrencyModel>())
-    val currencies = _currencies.asStateFlow()
-
-    private val _shares = MutableStateFlow(emptyList<ShareModel>())
-    val shares = _shares.asStateFlow()
-
-    private val _loadingShares = MutableStateFlow(false)
-    val loading = _loadingShares.asStateFlow()
+    private val _state = MutableStateFlow(MainState())
+    val state = _state.asStateFlow()
 
     private val _token = MutableStateFlow("")
     val token = _token.asStateFlow()
@@ -29,15 +32,17 @@ class MainViewModel(private val tinkoffRepository: TinkoffRepository): ViewModel
     private val settings = Settings()
 
     init {
-        _token.update { settings.getString("token", "") }
+        _token.update { settings["token"] ?: "" }
         fetchCurrencies()
     }
 
     private fun fetchCurrencies() {
         viewModelScope.launch {
             try {
-                tinkoffRepository.getCurrencies(_token.value).collect { curr ->
-                    _currencies.update { it.plus(curr) }
+                tinkoffRepository.getCurrencies(_token.value) {
+                    _state.update { it.copy(loadingCurrencies = false) }
+                }.collect { curr ->
+                    _state.update { it.copy(currencies = it.currencies.plus(curr)) }
                 }
             } catch (_: Throwable) {}
         }
@@ -45,11 +50,9 @@ class MainViewModel(private val tinkoffRepository: TinkoffRepository): ViewModel
 
     fun searchShares(query: String) {
         viewModelScope.launch {
-            _shares.update { emptyList() }
-            _loadingShares.update { true }
+            _state.update { it.copy(shares = emptyList(), loadingShares = true) }
             tinkoffRepository.findShare(query, _token.value).collect { share ->
-                _shares.update { share.first }
-                _loadingShares.update { !share.second }
+                _state.update { it.copy(shares = share.first, loadingShares = !share.second) }
             }
         }
     }

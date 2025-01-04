@@ -25,7 +25,7 @@ class TinkoffRepositoryImpl(private val tinkoffApi: TinkoffApi) : TinkoffReposit
     private val fmt = DecimalFormat()
     private val localeMap = LocaleMap()
 
-    override fun getCurrencies(token: String): Flow<CurrencyModel> = flow {
+    override fun getCurrencies(token: String, onFinish: () -> Unit): Flow<CurrencyModel> = flow {
         coroutineScope {
             tinkoffApi.getCurrencies(
                 token, ApiBaseUrl.SANDBOX_BASE_URL
@@ -62,6 +62,7 @@ class TinkoffRepositoryImpl(private val tinkoffApi: TinkoffApi) : TinkoffReposit
                     )
                 }
             }.onEach { it.await()?.let { emit(it) } }
+            onFinish()
         }
     }
 

@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ShareDTO(
     @SerialName("instrument")
-    val shareInstruments: ShareInstrument? = null,
+    val shareInstruments: ShareInstrument,
 )
 
 @Serializable

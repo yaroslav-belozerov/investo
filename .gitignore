@@ -6,3 +6,4 @@ kotlin-js-store
 .kotlin
 .fleet
 kls_database.db
+local.properties

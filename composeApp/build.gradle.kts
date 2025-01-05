@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -14,27 +15,23 @@ plugins {
 
 kotlin {
     androidTarget {
-        @OptIn(ExperimentalKotlinGradlePluginApi::class)
-        compilerOptions {
+        @OptIn(ExperimentalKotlinGradlePluginApi::class) compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
+        iosX64(), iosArm64(), iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
         }
     }
-    
+
     jvm("desktop")
-    
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
+
+    @OptIn(ExperimentalWasmDsl::class) wasmJs {
         moduleName = "composeApp"
         browser {
             val rootDirPath = project.rootDir.path
@@ -52,10 +49,15 @@ kotlin {
         }
         binaries.executable()
     }
-    
+
     sourceSets {
+        val commonMain by getting {
+            kotlin.srcDir(
+                layout.buildDirectory.dir("generated/kotlin/")
+            )
+        }
         val desktopMain by getting
-        
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
@@ -94,6 +96,9 @@ kotlin {
             implementation("org.jetbrains.compose.material3.adaptive:adaptive:1.0.0-alpha03")
             implementation("org.jetbrains.compose.material3.adaptive:adaptive-layout:1.0.0-alpha03")
             implementation("org.jetbrains.compose.material3.adaptive:adaptive-navigation:1.0.0-alpha03")
+
+            val napierVersion = "2.7.1"
+            implementation("io.github.aakira:napier:$napierVersion")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -101,6 +106,7 @@ kotlin {
             implementation(libs.ktor.client.cio)
 
             implementation("org.jetbrains.compose.material3:material3-desktop:1.7.0")
+            api("org.slf4j:slf4j-simple:2.0.7")
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -152,4 +158,31 @@ compose.desktop {
             packageVersion = "1.0.0"
         }
     }
+}
+
+val buildConfigGenerator by tasks.registering(Sync::class) {
+    val properties = Properties().apply {
+        load(project.rootProject.file("local.properties").inputStream())
+    }
+    val debugBuildFlag: Provider<Boolean> =
+        provider { properties.getProperty("debug") == "true" }
+    val buildConfigFileContents: Provider<TextResource> = debugBuildFlag.map { debugBuild ->
+        resources.text.fromString(
+            """
+              |package org.yaabelozerov.investo.config
+              |
+              |object BuildConfig {
+              |  const val DEBUG_BUILD = $debugBuild
+              |}
+              |
+            """.trimMargin()
+        )
+    }
+
+    from(buildConfigFileContents) {
+        rename { "BuildConfig.kt" }
+        into("investo/composeapp/generated/config/")
+    }
+
+    into(layout.buildDirectory.dir("generated/kotlin/"))
 }

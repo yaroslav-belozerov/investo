@@ -5,6 +5,7 @@ import com.russhwolf.settings.Settings
 import com.russhwolf.settings.coroutines.FlowSettings
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpRequestRetry
+import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
@@ -30,12 +31,8 @@ expect fun getPlatform(): Platform
 
 val appModule = module {
     single { HttpClient() {
-        install(Logging) {
-            logger = Logger.SIMPLE
-            level = LogLevel.INFO
-        }
         install(HttpRequestRetry) {
-            retryOnServerErrors(maxRetries = 5)
+            retryOnServerErrors(maxRetries = 2)
             exponentialDelay()
         }
         install(ContentNegotiation) {
@@ -53,6 +50,7 @@ val appModule = module {
                 append("accept", "application/json")
             }
         }
+        expectSuccess = true
     } }
     single { TinkoffApi(get(HttpClient::class)) }
     single<TinkoffRepository> { TinkoffRepositoryImpl(get()) }

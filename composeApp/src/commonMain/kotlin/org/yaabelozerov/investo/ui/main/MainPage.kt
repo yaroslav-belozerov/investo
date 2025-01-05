@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -47,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import org.yaabelozerov.investo.domain.MainViewModel
+import org.yaabelozerov.investo.string
 
 @Composable
 fun MainPage(
@@ -55,7 +57,6 @@ fun MainPage(
     lazyListState: LazyListState,
     modifier: Modifier = Modifier
 ) {
-    var sharesQuery by remember { mutableStateOf("") }
     val state by mvm.state.collectAsStateWithLifecycle()
     Box(Modifier.fillMaxSize()) {
         LazyColumn(
@@ -67,26 +68,44 @@ fun MainPage(
             item {
                 AnimatedContent(state.loadingCurrencies) {
                     if (it) {
-                        LinearProgressIndicator(Modifier.fillMaxWidth().padding(horizontal = 8.dp))
-                    } else if (state.currencies.isNotEmpty()) {
+                        LinearProgressIndicator(
+                            Modifier.fillMaxWidth().padding(horizontal = 8.dp).padding(top = 8.dp)
+                        )
+                    } else if (state.currencies.isNotEmpty() && state.currencyError == null) {
                         CurrencyRow(state.currencies)
+                    } else {
+                        state.currencyError?.run {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                modifier = Modifier.padding(top = 8.dp)
+                            ) {
+                                Icon(
+                                    Icons.Default.Warning,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                                Text(string(), color = MaterialTheme.colorScheme.error)
+                            }
+                        }
                     }
                 }
             }
             item {
                 ShareSearchBar(
-                    query = sharesQuery,
-                    onUpdateQuery = { sharesQuery = it },
+                    query = state.searchQuery,
+                    onUpdateQuery = mvm::setQuery,
+                    error = state.shareError,
                     isLoading = state.loadingShares,
-                    onSearch = {
-                        mvm.searchShares(
-                            sharesQuery.trim()
-                        )
-                    },
+                    onSearch = mvm::searchShares,
                     focusRequester = fr
                 )
             }
-            items(state.shares, key = { it.figi }) { share -> ShareCard(share) }
+            items(state.shares, key = { it.figi }) { share ->
+                ShareCard(
+                    share, modifier = Modifier.animateItem()
+                )
+            }
         }
         val scope = rememberCoroutineScope()
         val showButton by derivedStateOf { lazyListState.firstVisibleItemIndex > 3 }
@@ -96,7 +115,7 @@ fun MainPage(
             enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
             exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
         ) {
-            Card( onClick = {
+            Card(onClick = {
                 scope.launch {
                     lazyListState.animateScrollToItem(0)
                 }

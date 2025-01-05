@@ -26,11 +26,14 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.yaabelozerov.investo.NetworkError
+import org.yaabelozerov.investo.string
 
 @Composable
 fun ShareSearchBar(
     query: String,
     onUpdateQuery: (String) -> Unit,
+    error: NetworkError?,
     isLoading: Boolean,
     onSearch: () -> Unit,
     focusRequester: FocusRequester
@@ -45,6 +48,7 @@ fun ShareSearchBar(
         onValueChange = {
             onUpdateQuery(it)
         },
+        isError = error != null,
         singleLine = true,
         enabled = !isLoading,
         trailingIcon = {
@@ -75,7 +79,7 @@ fun ShareSearchBar(
         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
         placeholder = {
             Text(
-                "Shares"
+                error?.string() ?: "Shares"
             )
         },
     )

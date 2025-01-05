@@ -5,24 +5,32 @@ import androidx.lifecycle.viewModelScope
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.get
 import com.russhwolf.settings.set
+import io.github.aakira.napier.Napier
+import io.github.aakira.napier.log
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.yaabelozerov.investo.NetworkError
+import org.yaabelozerov.investo.NetworkResult
 import org.yaabelozerov.investo.network.ApiBaseUrl
+import org.yaabelozerov.investo.network.model.ShareDTO
 import org.yaabelozerov.investo.ui.main.model.CurrencyModel
 import org.yaabelozerov.investo.ui.main.model.ShareModel
 
 data class MainState(
     val currencies: List<CurrencyModel> = emptyList(),
     val loadingCurrencies: Boolean = true,
+    val currencyError: NetworkError? = null,
     val shares: List<ShareModel> = emptyList(),
-    val loadingShares: Boolean = false
+    val loadingShares: Boolean = false,
+    val shareError: NetworkError? = null,
+    val searchQuery: String = ""
 )
 
-class MainViewModel(private val tinkoffRepository: TinkoffRepository): ViewModel() {
+class MainViewModel(private val tinkoffRepository: TinkoffRepository) : ViewModel() {
     private val _state = MutableStateFlow(MainState())
     val state = _state.asStateFlow()
 
@@ -36,23 +44,35 @@ class MainViewModel(private val tinkoffRepository: TinkoffRepository): ViewModel
         fetchCurrencies()
     }
 
+    fun setQuery(query: String) {
+        _state.update { it.copy(searchQuery = query) }
+    }
+
     private fun fetchCurrencies() {
         viewModelScope.launch {
             try {
-                tinkoffRepository.getCurrencies(_token.value) {
-                    _state.update { it.copy(loadingCurrencies = false) }
-                }.collect { curr ->
-                    _state.update { it.copy(currencies = it.currencies.plus(curr)) }
+                tinkoffRepository.getCurrencies(_token.value).collect { curr ->
+                    when (curr) {
+                        is NetworkResult.Success -> _state.update { it.copy(currencies = curr.value, currencyError = null) }
+                        is NetworkResult.Error -> _state.update { it.copy(loadingCurrencies = false, currencyError = curr.error) }
+                        is NetworkResult.Finished -> _state.update { it.copy(loadingCurrencies = false) }
+                    }
                 }
-            } catch (_: Throwable) {}
+            } catch (t: Throwable) {
+                log(throwable = t) { "Error fetching currencies in MainViewModel" }
+            }
         }
     }
 
-    fun searchShares(query: String) {
+    fun searchShares() {
         viewModelScope.launch {
             _state.update { it.copy(shares = emptyList(), loadingShares = true) }
-            tinkoffRepository.findShare(query, _token.value).collect { share ->
-                _state.update { it.copy(shares = share.first, loadingShares = !share.second) }
+            tinkoffRepository.findShare(_state.value.searchQuery, _token.value).collect { share ->
+                when (share) {
+                    is NetworkResult.Success -> _state.update { it.copy(shares = it.shares + share.value, shareError = null) }
+                    is NetworkResult.Error -> _state.update { it.copy(loadingShares = false, shareError = share.error, searchQuery = "") }
+                    is NetworkResult.Finished -> _state.update { it.copy(loadingShares = false) }
+                }
             }
         }
     }

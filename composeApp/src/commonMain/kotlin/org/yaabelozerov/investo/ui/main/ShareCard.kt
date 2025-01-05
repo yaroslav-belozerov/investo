@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -46,50 +48,47 @@ import org.yaabelozerov.investo.ui.main.model.ShareModel
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalLayoutApi::class)
 @Composable
-fun ShareCard(share: ShareModel) {
-    AnimatedVisibility(share.isLoaded, enter = slideInVertically() + fadeIn()) {
-        ElevatedCard(
-            modifier = Modifier.fillMaxWidth().animateContentSize()
-                .clip(MaterialTheme.shapes.medium)
+fun ShareCard(share: ShareModel, modifier: Modifier = Modifier) {
+    ElevatedCard(
+        modifier = modifier.fillMaxWidth().clip(MaterialTheme.shapes.medium)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.weight(1f)
             ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.weight(1f)
+                Text(
+                    modifier = Modifier.animateContentSize(),
+                    text = share.name,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 2
+                )
+                FlowRow(
+                    modifier = Modifier,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text(
-                        modifier = Modifier.animateContentSize(),
-                        text = share.name,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 2
-                    )
-                    FlowRow(
-                        modifier = Modifier,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        if (share.country.isNotBlank()) ShareChip(share.country)
-                        if (share.canShort) ShareChip("Short")
-                        when {
-                            share.canSell && share.canBuy -> ShareChip(
-                                "Sell" to MaterialTheme.colorScheme.error,
-                                "Buy" to MaterialTheme.colorScheme.primary
-                            )
-                            share.canSell -> ShareChip("Sell" to MaterialTheme.colorScheme.error)
-                            share.canBuy -> ShareChip("Buy" to MaterialTheme.colorScheme.primary)
-                        }
+                    if (share.country.isNotBlank()) ShareChip(share.country)
+                    if (share.canShort) ShareChip("Short")
+                    when {
+                        share.canSell && share.canBuy -> ShareChip(
+                            "Sell" to MaterialTheme.colorScheme.error,
+                            "Buy" to MaterialTheme.colorScheme.primary
+                        )
+
+                        share.canSell -> ShareChip("Sell" to MaterialTheme.colorScheme.error)
+                        share.canBuy -> ShareChip("Buy" to MaterialTheme.colorScheme.primary)
                     }
                 }
-                Spacer(modifier = Modifier.width(32.dp))
-                Text(
-                    text = share.price,
-                    softWrap = false,
-                )
-                Spacer(modifier = Modifier.width(8.dp))
             }
+            Spacer(modifier = Modifier.width(32.dp))
+            Text(
+                text = share.price,
+                softWrap = false,
+            )
+            Spacer(modifier = Modifier.width(8.dp))
         }
     }
 }

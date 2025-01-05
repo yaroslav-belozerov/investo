@@ -8,6 +8,5 @@ data class ShareModel(
     val country: String,
     val apiTrade: Boolean = false,
     val canBuy: Boolean = false,
-    val canSell: Boolean = false,
-    val isLoaded: Boolean = false
+    val canSell: Boolean = false
 )

@@ -18,6 +18,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.window.core.layout.WindowWidthSizeClass
+import io.github.aakira.napier.LogLevel
+import io.github.aakira.napier.Napier
+import io.github.aakira.napier.log
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
@@ -57,15 +60,15 @@ fun App() {
                         )
                     }, onClick = {
                         if (it == currentDestination && it == Nav.MAIN) {
-                            try {
-                                fr.requestFocus()
-                            } catch (_: Exception) {
-                            }
                             scope.launch {
                                 lazyListState.animateScrollToItem(0)
                                 try {
                                     fr.requestFocus()
-                                } catch (_: Exception) {
+                                } catch (t: Throwable) {
+                                    log(
+                                        priority = LogLevel.INFO,
+                                        throwable = t,
+                                    ) { "Focus request failed on main screen" }
                                 }
                             }
                         } else {

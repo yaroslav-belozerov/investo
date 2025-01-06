@@ -24,7 +24,7 @@ val EnStrings = Strings(
     chooseLanguage = "Language",
     currentLanguage = "Current",
     short = "Short",
-    buySell = "Sell" to "Buy",
+    buySell = "Buy" to "Sell",
     networkError = {
         when (it) {
             NetworkError.Server -> "Server Error"
@@ -44,7 +44,7 @@ val RuStrings = Strings(
     chooseLanguage = "Язык",
     currentLanguage = "Текущий",
     short = "Шорт",
-    buySell = "Продать" to "Купить",
+    buySell = "Купить" to "Продать",
     networkError = {
         when (it) {
             NetworkError.Server -> "Ошибка сервера"

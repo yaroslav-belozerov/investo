@@ -39,12 +39,15 @@ fun App() {
     val fr = remember { FocusRequester() }
     val lazyListState = rememberLazyListState()
     val navCtrl = rememberNavController()
+    var currentDestination by rememberSaveable { mutableStateOf(Nav.MAIN) }
+    navCtrl.addOnDestinationChangedListener { _, dest, _ ->
+        currentDestination = Nav.entries.find { dest.route == it.route } ?: return@addOnDestinationChangedListener
+    }
     val scope = rememberCoroutineScope()
     MaterialTheme(
         colorScheme = if (isSystemInDarkTheme()) darkScheme else lightScheme,
         typography = Typography
     ) {
-        var currentDestination by rememberSaveable { mutableStateOf(Nav.MAIN) }
         val addPadding = isLayoutWide()
         NavigationSuiteScaffold(layoutType = if (isLayoutWide()) NavigationSuiteType.NavigationRail else NavigationSuiteType.NavigationBar,
             navigationSuiteItems = {
@@ -81,7 +84,6 @@ fun App() {
                                     saveState = true
                                 }
                             }
-                            currentDestination = it
                         }
                     })
                 }

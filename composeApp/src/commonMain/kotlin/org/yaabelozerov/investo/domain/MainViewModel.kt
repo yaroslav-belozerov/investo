@@ -1,7 +1,10 @@
 package org.yaabelozerov.investo.domain
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.lyricist.rememberStrings
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.get
 import com.russhwolf.settings.set
@@ -38,6 +41,10 @@ class MainViewModel(private val tinkoffRepository: TinkoffRepository) : ViewMode
     val token = _token.asStateFlow()
 
     private val settings = Settings()
+
+    var languageTag
+        get() = settings.getString("language", Locale.current.toLanguageTag())
+        set(value) = settings.set("language", value)
 
     init {
         _token.update { settings["token"] ?: "" }

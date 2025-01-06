@@ -44,6 +44,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.lyricist.LocalStrings
 import org.yaabelozerov.investo.ui.main.model.ShareModel
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalLayoutApi::class)
@@ -65,21 +66,22 @@ fun ShareCard(share: ShareModel, modifier: Modifier = Modifier) {
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 2
                 )
+                val str = LocalStrings.current
                 FlowRow(
                     modifier = Modifier,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     if (share.country.isNotBlank()) ShareChip(share.country)
-                    if (share.canShort) ShareChip("Short")
+                    if (share.canShort) ShareChip(str.short)
                     when {
                         share.canSell && share.canBuy -> ShareChip(
-                            "Sell" to MaterialTheme.colorScheme.error,
-                            "Buy" to MaterialTheme.colorScheme.primary
+                            str.buySell.first to MaterialTheme.colorScheme.primary,
+                            str.buySell.second to MaterialTheme.colorScheme.error,
                         )
 
-                        share.canSell -> ShareChip("Sell" to MaterialTheme.colorScheme.error)
-                        share.canBuy -> ShareChip("Buy" to MaterialTheme.colorScheme.primary)
+                        share.canBuy -> ShareChip(str.buySell.first to MaterialTheme.colorScheme.primary)
+                        share.canSell -> ShareChip(str.buySell.second to MaterialTheme.colorScheme.error)
                     }
                 }
             }

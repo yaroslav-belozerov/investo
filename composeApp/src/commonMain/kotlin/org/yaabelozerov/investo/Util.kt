@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import cafe.adriel.lyricist.LocalStrings
 import io.github.aakira.napier.log
 import io.ktor.client.call.body
 import io.ktor.client.plugins.ClientRequestException
@@ -164,14 +165,4 @@ fun Throwable?.toError(): NetworkError = when (this) {
     is ClientRequestException -> this.response.status.toNetworkError()
     is UnresolvedAddressException, is IOException -> NetworkError.Network
     else -> NetworkError.Unknown
-}
-
-@Composable
-fun NetworkError.string(): String {
-    return when (this) {
-        NetworkError.Server -> "Server Error"
-        NetworkError.Credentials -> "Token is Invalid"
-        NetworkError.Network -> "Network Error"
-        NetworkError.Unknown -> "Something went wrong"
-    }
 }

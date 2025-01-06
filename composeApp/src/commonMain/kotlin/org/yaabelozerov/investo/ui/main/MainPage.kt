@@ -29,6 +29,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -46,9 +47,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import cafe.adriel.lyricist.LocalStrings
 import kotlinx.coroutines.launch
 import org.yaabelozerov.investo.domain.MainViewModel
-import org.yaabelozerov.investo.string
 
 @Composable
 fun MainPage(
@@ -74,7 +75,7 @@ fun MainPage(
                     } else if (state.currencies.isNotEmpty() && state.currencyError == null) {
                         CurrencyRow(state.currencies)
                     } else {
-                        state.currencyError?.run {
+                        state.currencyError?.let {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -85,7 +86,7 @@ fun MainPage(
                                     contentDescription = null,
                                     tint = MaterialTheme.colorScheme.error
                                 )
-                                Text(string(), color = MaterialTheme.colorScheme.error)
+                                Text(LocalStrings.current.networkError(it), color = MaterialTheme.colorScheme.error)
                             }
                         }
                     }

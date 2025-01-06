@@ -26,8 +26,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.lyricist.LocalStrings
 import org.yaabelozerov.investo.NetworkError
-import org.yaabelozerov.investo.string
 
 @Composable
 fun ShareSearchBar(
@@ -78,9 +78,9 @@ fun ShareSearchBar(
         }),
         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
         placeholder = {
-            Text(
-                error?.string() ?: "Shares"
-            )
+            LocalStrings.current.run {
+                Text(error?.let(networkError) ?: shares)
+            }
         },
     )
 }

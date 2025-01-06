@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.ksp)
     id("kotlinx-serialization")
 }
 
@@ -52,8 +53,9 @@ kotlin {
 
     sourceSets {
         val commonMain by getting {
-            kotlin.srcDir(
-                layout.buildDirectory.dir("generated/kotlin/")
+            kotlin.srcDirs(
+                layout.buildDirectory.dir("generated/kotlin/"),
+                "build/generated/ksp/metadata/commonMain/kotlin"
             )
         }
         val desktopMain by getting
@@ -99,6 +101,8 @@ kotlin {
 
             val napierVersion = "2.7.1"
             implementation("io.github.aakira:napier:$napierVersion")
+
+            implementation(libs.lyricist)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -146,6 +150,7 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
+    add("kspCommonMainMetadata", "cafe.adriel.lyricist:lyricist-processor:${libs.versions.lyricist.get()}")
 }
 
 compose.desktop {
@@ -185,4 +190,10 @@ val buildConfigGenerator by tasks.registering(Sync::class) {
     }
 
     into(layout.buildDirectory.dir("generated/kotlin/"))
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().all {
+    if(name != "kspCommonMainKotlinMetadata") {
+        dependsOn("kspCommonMainKotlinMetadata")
+    }
 }

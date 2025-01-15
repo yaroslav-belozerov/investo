@@ -7,6 +7,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.window.core.layout.WindowWidthSizeClass
 import com.russhwolf.settings.Settings
+import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.engine.js.Js
 import org.yaabelozerov.investo.network.TinkoffApi
 import org.yaabelozerov.investo.ui.theme.Typography
 import kotlin.math.pow
@@ -55,3 +57,8 @@ actual class LocaleMap actual constructor() {
 
 @Composable
 actual fun isLayoutWide() = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass != WindowWidthSizeClass.COMPACT
+
+
+actual object Net {
+    actual val engine = Js.create()
+}

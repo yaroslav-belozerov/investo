@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.coroutines.FlowSettings
 import io.ktor.client.HttpClient
+import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -12,8 +13,11 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
+import io.ktor.serialization.kotlinx.json.KotlinxSerializationJsonExtensionProvider
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.contextual
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -29,8 +33,12 @@ interface Platform {
 
 expect fun getPlatform(): Platform
 
+expect object Net {
+    val engine: HttpClientEngine
+}
+
 val appModule = module {
-    single { HttpClient() {
+    single { HttpClient(Net.engine) {
         install(HttpRequestRetry) {
             retryOnServerErrors(maxRetries = 2)
             exponentialDelay()

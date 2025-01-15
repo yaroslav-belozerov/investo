@@ -12,6 +12,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.window.core.layout.WindowWidthSizeClass
+import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.engine.okhttp.OkHttp
 import org.yaabelozerov.investo.ui.theme.Typography
 import java.text.DecimalFormat
 import java.util.Currency
@@ -53,3 +55,9 @@ actual class LocaleMap actual constructor() {
 
 @Composable
 actual fun isLayoutWide() = currentWindowAdaptiveInfo().windowSizeClass.windowWidthSizeClass != WindowWidthSizeClass.COMPACT
+
+actual object Net {
+    actual val engine = OkHttp.create {
+        config { followRedirects(true) }
+    }
+}

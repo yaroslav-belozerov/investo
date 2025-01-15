@@ -5,8 +5,15 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import com.russhwolf.settings.Settings
+import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.engine.okhttp.OkHttpEngine
+import io.ktor.client.engine.okhttp.OkHttpEngineContainer
+import kotlinx.coroutines.Dispatchers
 import org.yaabelozerov.investo.network.TinkoffApi
 import org.yaabelozerov.investo.ui.theme.Typography
+import javax.net.ssl.SSLSocketFactory
+import javax.net.ssl.TrustManagerFactory
 import kotlin.math.pow
 import kotlin.math.round
 
@@ -52,3 +59,12 @@ actual class LocaleMap actual constructor() {
 
 @Composable
 actual fun isLayoutWide() = true
+
+actual object Net {
+    actual val engine = OkHttp.create {
+        config {
+            followSslRedirects(true)
+            followRedirects(true)
+        }
+    }
+}

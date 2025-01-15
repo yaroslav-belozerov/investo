@@ -3,6 +3,7 @@ package org.yaabelozerov.investo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.window.core.layout.WindowWidthSizeClass
+import io.ktor.client.engine.HttpClientEngine
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.math.pow
 import kotlin.math.round

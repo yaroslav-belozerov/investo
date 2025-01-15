@@ -11,7 +11,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.ksp)
-    id("kotlinx-serialization")
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 kotlin {
@@ -88,7 +88,10 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.3")
+            implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
             implementation(libs.ktor.client.logging)
+            implementation("com.squareup.okio:okio:3.10.2")
 
             implementation("com.russhwolf:multiplatform-settings:1.2.0")
             implementation("com.russhwolf:multiplatform-settings-coroutines:1.2.0")
@@ -107,9 +110,11 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
-            implementation(libs.ktor.client.cio)
+            implementation("io.ktor:ktor-client-okhttp:3.0.3") {
+                exclude(group="com.squareup.okio", module="okio")
+            }
 
-            implementation("org.jetbrains.compose.material3:material3-desktop:1.7.0")
+            implementation("org.jetbrains.compose.material3:material3-desktop:1.7.3")
             api("org.slf4j:slf4j-simple:2.0.7")
         }
         iosMain.dependencies {
@@ -155,6 +160,11 @@ dependencies {
 
 compose.desktop {
     application {
+        buildTypes.release.proguard {
+            version.set("7.6.1")
+            configurationFiles.from("proguard-rules.pro")
+        }
+
         mainClass = "org.yaabelozerov.investo.MainKt"
 
         nativeDistributions {

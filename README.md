@@ -6,9 +6,9 @@
 </div>
 
 ## ⏩ Table of contents
-- [Status](#project-status)
-- [Features](#features)
-- [Installation](#installation)
+- [Status](#-project-status)
+- [Features](#-features)
+- [Installation](#-building)
 
 ## 👁 Project Status
 👷‍♂️ In active development. Not yet released.

@@ -1,7 +1,7 @@
 # Investo
 <div style="display: flex; flex-direction: row;">
-<p align="center"><img style="width: 25%" alt="currency ui showcase" src="/misc/screenshots/currencies.png" /></p>
-<p align="center"><img style="width: 25%" alt="shares ui showcase" src="/misc/screenshots/shares.png" /></p>
+<img style="width: 33%;" alt="currency ui showcase" src="/misc/screenshots/currencies.png" />
+<img style="width: 33%;" alt="shares ui showcase" src="/misc/screenshots/shares.png" />
 </div>
 
 ## Table of contents
@@ -23,7 +23,7 @@
    git clone git@github.com:yaroslav-belozerov/investo.git
    cd ./investo
    ```
-   or download as a [zip file](https://github.com/yaroslav-belozerov/investo/archive/refs/heads/main.zip
+   or download as a [zip file](https://github.com/yaroslav-belozerov/investo/archive/refs/heads/main.zip)
 ### Android
    ```sh
    ./gradlew assembleRelease

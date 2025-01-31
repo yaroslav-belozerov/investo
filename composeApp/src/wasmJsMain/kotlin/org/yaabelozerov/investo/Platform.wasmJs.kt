@@ -27,7 +27,7 @@ actual class DecimalFormat actual constructor() {
 }
 
 actual class LocaleMap actual constructor() {
-    actual fun countryToFlag(isoCode: String): String {
+    actual fun countryToFlag(isoCode: String): String? {
         return isoCode
     }
 

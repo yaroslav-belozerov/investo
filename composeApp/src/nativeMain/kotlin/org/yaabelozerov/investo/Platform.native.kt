@@ -16,7 +16,7 @@ actual class DecimalFormat actual constructor() {
 
 actual class LocaleMap actual constructor() {
     @OptIn(ExperimentalNativeApi::class)
-    actual fun countryToFlag(isoCode: String): String {
+    actual fun countryToFlag(isoCode: String): String? {
         return isoCode
     }
 

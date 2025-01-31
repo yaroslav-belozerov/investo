@@ -24,12 +24,16 @@ actual class DecimalFormat actual constructor() {
 }
 
 actual class LocaleMap actual constructor() {
-    actual fun countryToFlag(isoCode: String): String {
+    actual fun countryToFlag(isoCode: String): String? {
         val isoCode = isoCode.uppercase()
         var flagOffset = 0x1F1E6
         var asciiOffset = 0x41
-        var firstChar = Character.codePointAt(isoCode.uppercase(), 0) - asciiOffset + flagOffset
-        var secondChar = Character.codePointAt(isoCode.uppercase(), 1) - asciiOffset + flagOffset
+        var firstChar: Int
+        var secondChar: Int
+        try {
+            firstChar = Character.codePointAt(isoCode.uppercase(), 0) - asciiOffset + flagOffset
+            secondChar = Character.codePointAt(isoCode.uppercase(), 1) - asciiOffset + flagOffset
+        } catch (_: Exception) { return null }
         return String(Character.toChars(firstChar)) + String(Character.toChars(secondChar))
     }
 

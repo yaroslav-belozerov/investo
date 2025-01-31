@@ -73,6 +73,6 @@ expect class DecimalFormat() {
 }
 
 expect class LocaleMap() {
-    fun countryToFlag(isoCode: String) : String
     fun currencyToSymbol(isoCode: String) : String
+    fun countryToFlag(isoCode: String): String?
 }
